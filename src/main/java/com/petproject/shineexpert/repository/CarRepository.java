@@ -1,2 +1,7 @@
-package com.petproject.shineexpert.repository;public class CarRepository {
+package com.petproject.shineexpert.repository;
+
+import com.petproject.shineexpert.entity.Car;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CarRepository extends JpaRepository<Car, Long> {
 }
