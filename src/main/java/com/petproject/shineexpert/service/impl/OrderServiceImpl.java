@@ -1,11 +1,10 @@
 package com.petproject.shineexpert.service.impl;
 
 import com.petproject.shineexpert.dto.OrderDto;
-import com.petproject.shineexpert.entity.Car;
-import com.petproject.shineexpert.entity.Order;
-import com.petproject.shineexpert.entity.Services;
+import com.petproject.shineexpert.entity.*;
 import com.petproject.shineexpert.repository.OrderRepository;
 import com.petproject.shineexpert.service.CarService;
+import com.petproject.shineexpert.service.EmployeeService;
 import com.petproject.shineexpert.service.OrderService;
 import com.petproject.shineexpert.service.ServicesService;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,6 +22,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final CarService carService;
     private final ServicesService servicesService;
+
+    private final EmployeeService employeeService;
 
     @Override
     public Order findById(Long orderId) {
@@ -51,6 +52,11 @@ public class OrderServiceImpl implements OrderService {
         order.getServices().addAll(services);
         order.setPrice(countTotalPrice(services, car));
 
+        car.getOwner().incrementVisitCounter();
+//        Employee employee = employeeService.findAllActive().stream().findFirst().get();
+//        employee.setActive(false);
+//        order.setEmployee(employee);
+
         return orderRepository.save(order);
     }
 
@@ -71,6 +77,16 @@ public class OrderServiceImpl implements OrderService {
             case SUV -> sum += 40;
             default -> sum += 0;
         }
+        double discount = calculateDiscount(car.getOwner());
+        sum*=discount;
         return String.valueOf(sum);
+    }
+
+    private double calculateDiscount(Owner owner) {
+        if (owner.getVisitCounter() == 5){
+            owner.setVisitCounter(0);
+            return 0.5;
+        }
+        return 1;
     }
 }

@@ -1,12 +1,15 @@
 package com.petproject.shineexpert.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "car")
 public class Car extends BaseEntity{
@@ -28,4 +31,8 @@ public class Car extends BaseEntity{
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "car")
     private List<Order> orders = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private Owner owner;
 }
